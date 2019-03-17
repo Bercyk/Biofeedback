@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>GSR - sensor</title>
+    <script type="text/javascript" src="/webiopi.js"></script>
+    <script type="text/javascript">
+    webiopi().ready(init());
+	
+	function init()
+	{
+		setInterval(getValues, 500);
+	}
+	
+	var updateValues = function(macro, args, response) {
+		var ret_val = response.split(";");
+		if (ret_val[0] == 0)
+			stan.innerHTML = "Standby";
+		if (ret_val[0] == 1)
+			stan.innerHTML = "Auto-measure";
+		if (ret_val[0] == 2)
+			stan.innerHTML = "Manual-measure";
+		if (ret_val[0] == 3)
+			stan.innerHTML = "Auto-calibration";
+		current.innerHTML = ret_val[1] + " mA";
+		voltage.innerHTML = ret_val[2] + " V";
+		resistance.innerHTML = ret_val[3] + " kOm";
+	}
+	
+	function getValues()
+	{
+		webiopi().callMacro("getValues",[],updateValues);
+		
+	}
+	function SetTask(task)
+	{
+		args = [task];
+		webiopi().callMacro("setTask",args,updateValues);
+	
+	}
+	
+	function SetCurrent(current)
+	{
+		args = [current];
+		webiopi().callMacro("setCurrent",args,updateValues);
+	}
+	
+	function SetAngle()
+	{
+		args = [$("#angle").val()];
+		webiopi().callMacro("setAngle",args);
+	}
+	
+
+	
+    </script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+      .dropbtn {
+		background-color: #4CAF50;
+		color: white;
+		padding: 16px;
+		font-size: 16px;
+		border: none;
+		width: 120px;
+		height: 51px;
+		}
+
+		.dropdown {
+		  position: relative;
+		  display: inline-block;
+		}
+
+		.dropdown-content {
+		  display: none;
+		  position: absolute;
+		  background-color: #f1f1f1;
+		  min-width: 160px;
+		  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		  z-index: 1;
+		}
+
+		.dropdown-content a {
+		  color: black;
+		  padding: 12px 16px;
+		  text-decoration: none;
+		  display: block;
+		}
+
+		.dropdown-content a:hover {background-color: #ddd;}
+
+		.dropdown:hover .dropdown-content {display: block;}
+
+		.dropdown:hover .dropbtn {background-color: #3e8e41;}
+		
+		table {
+		  border-collapse: collapse;
+		  border-spacing: 0;
+		  width: 100%;
+		  border: 1px solid #ddd;
+		}
+
+		th, td {
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even){background-color: #f2f2f2}
+    </style>
+</head>
+<body>
+    <div>
+	<div style="overflow-x:auto;">
+  <table>
+    <tr>
+	  <th>Status</th>
+      <th>Current</th>
+      <th>Voltage</th>
+      <th>Resistance</th>
+    </tr>
+    <tr>
+      <td><p id="stan"></p></td>
+      <td><p id="current"></td>
+      <td><p id="voltage"></td>
+      <td><p id="resistance"></td>
+    </tr>
+  </table>
+</div>
+<div class="dropdown">
+  <button class="dropbtn">Status</button>
+  <div class="dropdown-content">
+    <a onclick="SetTask(0)">Standby</a>
+    <a onclick="SetTask(1)">Auto-measure</a>
+    <a onclick="SetTask(2)">Manual-measure</a>
+  </div>
+</div>
+
+<div class="dropdown">
+  <button class="dropbtn">Current</button>
+  <div class="dropdown-content">
+	<a onclick="SetCurrent(0)">0 mA</a>
+    <a onclick="SetCurrent(1)">0.01 mA</a>
+    <a onclick="SetCurrent(2)">0.02 mA</a>
+    <a onclick="SetCurrent(3)">0.21 mA</a>
+	<a onclick="SetCurrent(4)">0.42 mA</a>
+	<a onclick="SetCurrent(5)">1 mA</a>
+  </div>
+</div>
+<br/>
+<br/>
+<div>
+	Set Angle (0 - 180 degree)<input type="text" id="angle" /><br/><br/>
+	<button class="dropbtn" onclick="SetAngle()">Set Angle</button>
+</div>
+</body>
+</html>
